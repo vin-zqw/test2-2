@@ -1,0 +1,47 @@
+    //最短路径，Dijkdtra算法
+    vector<int> Dijkdtra(const V& start)
+    {
+        //保存结果值，下标为顶点元素的下标，
+        vector<int> dis(_ver.size());
+        //记录已确定的最小的值的顶点
+        vector<int> book(_ver.size(), 0);
+
+        //获取起始位置的下标，
+        int index = GetIndexOfVertex(start);
+        book[index] = 1;
+
+        //初始化dis
+        for (size_t idx = 0; idx < _edge[0].size(); ++idx)
+            dis[idx] = _edge[index][idx];       
+
+
+        while (true)
+        {
+            int u = -1;//新的源点下标
+            int min = INT_MAX;
+            //寻找未被处理过，且距离最小的点
+            for (size_t i = 0; i < dis.size(); ++i)
+            {
+                if (book[i] == 0 && dis[i] < min)
+                {
+                    min = dis[i];
+                    u = i;//记录最近的顶点下标               
+                }
+
+            }
+            //都处理过，退出
+            if (u == -1)
+                break;
+            book[u] = 1;
+            //步骤2
+            for (size_t v = 0; v < _edge[0].size(); ++v)
+            {
+                if (_edge[u][v] < INT_MAX)
+                {
+                    if (dis[v] > _edge[u][v] + dis[u])
+                        dis[v] = _edge[u][v] + dis[u];
+                }
+            }
+        }
+        return dis;
+    }
