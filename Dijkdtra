@@ -1,47 +1,55 @@
-    //最短路径，Dijkdtra算法
-    vector<int> Dijkdtra(const V& start)
-    {
-        //保存结果值，下标为顶点元素的下标，
-        vector<int> dis(_ver.size());
-        //记录已确定的最小的值的顶点
-        vector<int> book(_ver.size(), 0);
-
-        //获取起始位置的下标，
-        int index = GetIndexOfVertex(start);
-        book[index] = 1;
-
-        //初始化dis
-        for (size_t idx = 0; idx < _edge[0].size(); ++idx)
-            dis[idx] = _edge[index][idx];       
-
-
-        while (true)
-        {
-            int u = -1;//新的源点下标
-            int min = INT_MAX;
-            //寻找未被处理过，且距离最小的点
-            for (size_t i = 0; i < dis.size(); ++i)
-            {
-                if (book[i] == 0 && dis[i] < min)
-                {
-                    min = dis[i];
-                    u = i;//记录最近的顶点下标               
-                }
-
-            }
-            //都处理过，退出
-            if (u == -1)
-                break;
-            book[u] = 1;
-            //步骤2
-            for (size_t v = 0; v < _edge[0].size(); ++v)
-            {
-                if (_edge[u][v] < INT_MAX)
-                {
-                    if (dis[v] > _edge[u][v] + dis[u])
-                        dis[v] = _edge[u][v] + dis[u];
-                }
-            }
-        }
-        return dis;
+   #include<iostream>
+#include<cstdio>
+#define MAXN 2147483647
+using namespace std;
+int n,m,s;
+struct G{
+    int u;
+    int v;
+    int w;
+    int next;
+}e[500001];
+int head[500001];
+int d[500001];
+int read(){
+    int num=0;
+    char ch=getchar();
+    while(ch<'0' || ch>'9') ch=getchar();
+    while(ch>='0' && ch<='9'){
+        num=num*10+ch-'0';
+        ch=getchar();
     }
+    return num;
+}
+bool v[500001];
+int main(){
+    int i,j;
+    n=read();
+    m=read();
+    s=read();
+    for(i=1;i<=m;i++){
+        int a=read(),b=read(),c=read();
+        e[i].u=a;
+        e[i].v=b;
+        e[i].w=c;
+        e[i].next=head[a];
+        head[a]=i;
+    }
+    for(i=1;i<=n;i++) d[i]=MAXN; //初始化
+    d[s]=0;
+    for(i=1;i<=n;i++){
+        int k=0,minn=MAXN;
+        for(j=1;j<=n;j++) //寻找距离最小的点
+          if(minn>d[j] && !v[j]){
+              minn=d[j];
+              k=j;
+          }
+        v[k]=1; //标记为访问过
+        for(j=head[k];j!=0;j=e[j].next)
+            if(!v[e[j].v] && d[e[j].v]>d[e[j].u]+e[j].w) //更新节点
+            d[e[j].v]=d[e[j].u]+e[j].w;
+    }
+    for(i=1;i<=n;i++) cout<<d[i]<<" ";
+    return 0;
+}
+
